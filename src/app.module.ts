@@ -9,6 +9,7 @@ import { Restaurant } from './restaurants/entities/restaurants.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 
 @Module({
@@ -24,7 +25,7 @@ import { User } from './users/entities/user.entity';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-        TOKEN_SECRET: Joi.string().required(),
+        PRIVATE_KEY: Joi.string().required(),
       })
     }),
     GraphQLModule.forRoot({
@@ -41,8 +42,11 @@ import { User } from './users/entities/user.entity';
       logging: process.env.NODE_ENV !== 'prod',
       entities: [User]
     }),
+    JwtModule.forRoot({
+      privateKey: process.env.PRIVATE_KEY,
+    }),
     UsersModule,
-    CommonModule,
+    CommonModule,    
   ],
   controllers: [],
   providers: [],
