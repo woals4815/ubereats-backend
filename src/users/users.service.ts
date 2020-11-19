@@ -9,6 +9,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "src/jwt/jwt.service";
 import { EditProfileInput } from "./dtos/edit-profile.dto";
 import { Verification } from "./entities/verification.entity";
+import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 
 
 @Injectable()
@@ -82,17 +83,18 @@ export class UsersService {
         }
         return this.users.save(user);
     } 
-    async verifyEmail(code: string): Promise<boolean>{
+    async verifyEmail(code: string): Promise<VerifyEmailOutput>{
         try{
             const verification = await this.verifications.findOne({ code }, {relations: ["user"]});
             if(verification){
             verification.user.verified = true;
-            this.users.save(verification.user);
-            return true;
+            await this.users.save(verification.user);
+            await this.verifications.delete(verification.id);
+            return {ok: true};
         }
-            return false;
-        }catch(e){
-            
+            return {ok: false, error: 'Verification not found'};
+        }catch(error){
+            return { ok: false, error};
         }
     }
 }

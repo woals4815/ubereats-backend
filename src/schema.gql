@@ -51,7 +51,6 @@ type VerifyEmailOutput {
 }
 
 type Query {
-  hi: Boolean!
   me: User!
   userProfile(userId: Float!): UserProfileOutput!
 }
