@@ -30,7 +30,6 @@ export class User extends CoreEntity{
         {type: 'enum', enum: UserRole}
     )
     @Field(type => UserRole)
-    @IsString()
     @IsEnum(UserRole)
     role: UserRole;
 
