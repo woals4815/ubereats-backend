@@ -1,6 +1,6 @@
 # Uber Eats Clone
 
-The Backend of Uber Eats Clone
+The Backend of Uber Eats
 
 ## User Model
 
@@ -13,7 +13,6 @@ The Backend of Uber Eats Clone
 - role(client|owner|delivery)
 
 ## User CRUD
-
 - Create Account
 - Log In
 - See Profile
@@ -26,3 +25,17 @@ The Backend of Uber Eats Clone
 - category
 - address
 - coverImage
+
+## The Backend of Uber Eats
+
+- See Categories
+- See Restaurants by Catogory (pagination)
+- See Restaurants (pagination)
+- See Restaurant
+ 
+- Edit Restaurant
+- Delete Restaurant
+
+- Create Dish
+- Edit Dish
+- Delete Dish
