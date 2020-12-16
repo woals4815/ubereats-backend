@@ -5,7 +5,6 @@ import { join } from 'path';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
@@ -16,6 +15,8 @@ import { Restaurant } from './restaurants/entities/restaurants.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { Dish } from './restaurants/entities/dish.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
 
 
 @Module({
@@ -50,7 +51,7 @@ import { Dish } from './restaurants/entities/dish.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification, Restaurant, Category, Dish]
+      entities: [User, Verification, Restaurant, Category, Dish, Order]
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
@@ -63,7 +64,8 @@ import { Dish } from './restaurants/entities/dish.entity';
     AuthModule,
     UsersModule,
     AuthModule,
-    RestaurantsModule,        
+    RestaurantsModule,
+    OrdersModule,        
   ],
   controllers: [],
   providers: [],
