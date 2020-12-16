@@ -40,3 +40,8 @@ The Backend of Uber Eats
 - Create Dish
 - Edit Dish
 - Delete Dish
+
+- Orders CRUD
+- Orders Subscription (Owner, Customer, Delivery)
+
+- Payments (Paddle, CRON)
