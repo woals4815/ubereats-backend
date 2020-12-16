@@ -1,4 +1,5 @@
 import { Field, Float, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { truncate } from "fs/promises";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { Dish } from "src/restaurants/entities/dish.entity";
 import { Restaurant } from "src/restaurants/entities/restaurants.entity";
@@ -44,9 +45,9 @@ export class Order extends CoreEntity{
     @JoinTable()
     dishes: Dish[];
 
-    @Column()
-    @Field(type => Float)
-    total: number;
+    @Column({nullable: true})
+    @Field(type => Float, {nullable: true})
+    total?: number;
 
     @Column({type: 'enum', enum: OrderStatus})
     @Field(type => OrderStatus)
