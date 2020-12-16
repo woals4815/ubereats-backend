@@ -32,6 +32,7 @@ The Backend of Uber Eats
 - See Restaurants by Catogory (pagination)
 - See Restaurants (pagination)
 - See Restaurant
+- Search Restaurant
  
 - Edit Restaurant
 - Delete Restaurant
