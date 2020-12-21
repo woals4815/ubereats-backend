@@ -1,5 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { PubSub } from "graphql-subscriptions";
+import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
 import { Dish } from "src/restaurants/entities/dish.entity";
 import { Restaurant } from "src/restaurants/entities/restaurants.entity";
 import { User, UserRole } from "src/users/entities/user.entity";
@@ -8,6 +10,7 @@ import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { GetOrdersOutput, GetOrdersInput } from "./dtos/get-orders.dto";
+import { TakeOrderInput, TakeOrderOutput } from "./dtos/take-order.dto";
 import { OrderItem } from "./entities/order-item.entity";
 import { Order, OrderStatus } from "./entities/order.entity";
 
@@ -22,7 +25,8 @@ export class OrderService{
         @InjectRepository(OrderItem)
         private readonly orderItems: Repository<OrderItem>,
         @InjectRepository(Dish)
-        private readonly dishes: Repository<Dish>
+        private readonly dishes: Repository<Dish>,
+        @Inject(PUB_SUB) private readonly pubsub: PubSub
     ){}
     async createOrder(
         customer: User, 
@@ -75,7 +79,7 @@ export class OrderService{
                 );
                 orderItems.push(orderItem);
                 }
-                await this.orders.save(
+                const order = await this.orders.save(
                     this.orders.create({
                         customer,
                         restaurant,
@@ -83,6 +87,7 @@ export class OrderService{
                         items: orderItems,
                     })
                 );
+                await this.pubsub.publish(NEW_PENDING_ORDER, {pendingOrders: { order, ownerId: restaurant.ownerId}});
                 return {
                     ok: true,
                 };
@@ -184,8 +189,8 @@ export class OrderService{
         user: User, 
         {id: orderId, status}: EditOrderInput
         ): Promise<EditOrderOutput>{
-        const order = await this.orders.findOne(orderId, {relations: ['res']});
-        try{
+        try {    
+            const order = await this.orders.findOne(orderId);
             if(!order){
                 return{
                     ok:false,
@@ -224,14 +229,56 @@ export class OrderService{
                     status
                 }
             ]);
+            const newOrder = {...order, status};
+            if(user.role === UserRole.Owner){
+                if(status === OrderStatus.Cooked){
+                    await this.pubsub.publish(NEW_COOKED_ORDER, 
+                        {cookedOrders: newOrder,
+                    });
+                }
+            }
+            await this.pubsub.publish(NEW_ORDER_UPDATE, { orderUpdates: newOrder});
             return{
                 ok: true
-            }
+            };
         }catch{
             return{
                 ok: false,
                 error: 'Could not edit orders'
             };
         }
-    } 
+    }
+    async takeOrder(driver: User, 
+        {id: orderId}: TakeOrderInput): Promise<TakeOrderOutput>{
+            try{
+                const order = await this.orders.findOne(orderId);
+                if(!order){
+                    return {
+                        ok:false,
+                        error: 'Order not found'
+                    };
+                }
+                if(order.driver){
+                    return {
+                        ok: false,
+                        error: 'This order already has a driver'
+                    };
+                }
+                await this.orders.save({
+                    id: orderId,
+                    driver
+                });
+                await this.pubsub.publish(NEW_ORDER_UPDATE, {
+                    orderUpdates: {...order, driver},
+                });
+                return{
+                    ok: true
+                };
+            }catch{
+                return {
+                    ok: false,
+                    error: 'Couldnot update order.'
+                }
+            }
+        } 
 }

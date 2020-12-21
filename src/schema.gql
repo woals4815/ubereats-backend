@@ -60,6 +60,7 @@ enum OrderStatus {
   Pending
   Cooking
   PickedUp
+  Cooked
   Delivered
 }
 
@@ -87,6 +88,15 @@ type Restaurant {
   orders: [Order!]!
 }
 
+type Payment {
+  id: Float!
+  createdAt: DateTime!
+  updateAt: DateTime!
+  transactionId: Int!
+  user: User!
+  restaurant: Restaurant!
+}
+
 type User {
   id: Float!
   createdAt: DateTime!
@@ -97,6 +107,7 @@ type User {
   verified: Boolean!
   restaurants: [Restaurant!]!
   orders: [Order!]!
+  payments: [Payment!]!
   rides: [Order!]!
 }
 
@@ -204,6 +215,28 @@ type CreateOrderOutput {
   ok: Boolean!
 }
 
+type EditOrderOutput {
+  error: String
+  ok: Boolean!
+}
+
+type GetOrderOutput {
+  error: String
+  ok: Boolean!
+  order: Order
+}
+
+type GetOrdersOutput {
+  error: String
+  ok: Boolean!
+  orders: [Order!]
+}
+
+type TakeOrderOutput {
+  error: String
+  ok: Boolean!
+}
+
 type Query {
   me: User!
   userProfile(userId: Float!): UserProfileOutput!
@@ -212,6 +245,8 @@ type Query {
   searchRestaurant(input: SearchRestaurantInput!): SearchRestaurantOutput!
   allCategories: AllCategoriesOutput!
   category(input: CategoryInput!): CategoryOutput!
+  getOrders(input: GetOrdersInput!): GetOrdersOutput!
+  getOrder(input: GetOrderInput!): GetOrderOutput!
 }
 
 input RestaurantsInput {
@@ -232,6 +267,14 @@ input CategoryInput {
   slug: String!
 }
 
+input GetOrdersInput {
+  status: OrderStatus
+}
+
+input GetOrderInput {
+  id: Float!
+}
+
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
@@ -244,6 +287,8 @@ type Mutation {
   editDish(input: EditDishInput!): EditDishOutput!
   deleteDish(input: DeleteDishInput!): DeleteDishOutput!
   createOrder(input: CreateOrderInput!): CreateOrderOutput!
+  editOrder(input: EditOrderInput!): EditOrderOutput!
+  takeOrder(input: TakeOrderInput!): TakeOrderOutput!
 }
 
 input CreateAccountInput {
@@ -330,4 +375,23 @@ input OrderItemOptionInputType {
   name: String!
   choice: String
   extra: Int
+}
+
+input EditOrderInput {
+  id: Float!
+  status: OrderStatus!
+}
+
+input TakeOrderInput {
+  id: Float!
+}
+
+type Subscription {
+  pendingOrders: Order!
+  cookedOrders: Order!
+  orderUpdates(input: OrderUpdatesInput!): Order!
+}
+
+input OrderUpdatesInput {
+  id: Float!
 }

@@ -42,6 +42,9 @@ The Backend of Uber Eats
 - Delete Dish
 
 - Orders CRUD
-- Orders Subscription (Owner, Customer, Delivery)
+- Orders Subscription (Owner, Customer, Delivery):
+    - pending Orders (owner)
+    - Order status (customer, delivery, owner)
+    - Pending pickUp (delivery)
 
 - Payments (Paddle, CRON)
