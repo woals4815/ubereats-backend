@@ -71,7 +71,7 @@ type Category {
   name: String!
   coverImg: String
   slug: String!
-  restaurants: [Restaurant!]!
+  restaurants: [Restaurant!]
   restaurantCount: Int!
 }
 
@@ -158,6 +158,7 @@ type CategoryOutput {
   ok: Boolean!
   totalPages: Int
   totalResults: Int
+  restaurants: [Restaurant!]
   category: Category
 }
 

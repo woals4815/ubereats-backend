@@ -12,7 +12,7 @@ export class Category extends CoreEntity {
     @Field(type => String)
     @IsString()
     @Column({unique: true})
-    name: String;
+    name: string;
 
     @Field(type => String, {nullable: true})
     @Column({nullable: true})
@@ -24,7 +24,9 @@ export class Category extends CoreEntity {
     @IsString()
     slug: string;
 
-    @Field(type => [Restaurant])
-    @OneToMany(type => Restaurant, restaurant => restaurant.category) //first one: to which entity, second one: reverse login
+    @Field(type => [Restaurant], {nullable: true})
+    @OneToMany(
+        type => Restaurant, 
+        restaurant => restaurant.category) //first one: to which entity, second one: reverse login
     restaurants: Restaurant[];
 }

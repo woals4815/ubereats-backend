@@ -30,7 +30,7 @@ export class RestaurantService {
         private readonly dishes: Repository<Dish>
         ){}
         
-        async findReturnRestaurant(owner: User, restaurantId: number, descript: String): Promise<CoreOutput>{
+        async findReturnRestaurant(owner: User, restaurantId: number, descript: string): Promise<CoreOutput>{
             const restaurant = await this.restaurants.findOne(restaurantId);
             if(!restaurant){
                 return{
@@ -123,7 +123,7 @@ export class RestaurantService {
                 }
             }
         }
-        countRestaurants(category:Category){
+        countRestaurants(category:Category): Promise<number>{
             return this.restaurants.count({category});
         }
         async findCategoryBySlug({slug, page}: CategoryInput): Promise<CategoryOutput>{
