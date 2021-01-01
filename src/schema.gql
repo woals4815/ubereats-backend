@@ -192,6 +192,18 @@ type EditRestaurantOutput {
   ok: Boolean!
 }
 
+type MyRestaurantOutput {
+  error: String
+  ok: Boolean!
+  restaurant: Restaurant
+}
+
+type MyRestaurantsOutput {
+  error: String
+  ok: Boolean!
+  restaurants: [Restaurant!]!
+}
+
 type RestaurantOutput {
   error: String
   ok: Boolean!
@@ -255,6 +267,8 @@ type GetPaymentsOutput {
 type Query {
   me: User!
   userProfile(userId: Float!): UserProfileOutput!
+  myRestaurants: MyRestaurantsOutput!
+  myRestaurant(input: MyRestaurantInput!): MyRestaurantOutput!
   restaurants(input: RestaurantsInput!): RestaurantsOutput!
   restaurant(input: RestaurantInput!): RestaurantOutput!
   searchRestaurant(input: SearchRestaurantInput!): SearchRestaurantOutput!
@@ -263,6 +277,10 @@ type Query {
   getOrders(input: GetOrdersInput!): GetOrdersOutput!
   getOrder(input: GetOrderInput!): GetOrderOutput!
   getPayments: GetPaymentsOutput!
+}
+
+input MyRestaurantInput {
+  id: Float!
 }
 
 input RestaurantsInput {
