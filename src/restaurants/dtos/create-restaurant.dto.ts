@@ -1,4 +1,4 @@
-import { ArgsType, Field, InputType, ObjectType, PickType } from "@nestjs/graphql";
+import { ArgsType, Field, InputType, Int, ObjectType, PickType } from "@nestjs/graphql";
 import { CoreOutput } from "src/common/dtos/output.dto";
 import { Restaurant } from "../entities/restaurants.entity";
 
@@ -10,4 +10,7 @@ export class CreateRestaurantInput extends PickType(Restaurant, ["name", 'coverI
 }
 
 @ObjectType()
-export class CreateRestaurantOutput extends CoreOutput{}
+export class CreateRestaurantOutput extends CoreOutput{
+    @Field(type => Int)
+    restaurantId?: string;
+}
