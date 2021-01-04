@@ -59,7 +59,7 @@ export class OrderService{
                             if(dishOption.extra){
                                 dishFinalPrice = dishFinalPrice + dishOption.extra;
                             } else {
-                                const dishOptionChoice = dishOption.choices.find(
+                                const dishOptionChoice = dishOption.choices?.find(
                                     optionChoice => optionChoice.name === itemOption.choice
                                 );
                                 if(dishOptionChoice){
@@ -90,8 +90,10 @@ export class OrderService{
                 await this.pubsub.publish(NEW_PENDING_ORDER, {pendingOrders: { order, ownerId: restaurant.ownerId}});
                 return {
                     ok: true,
+                    orderId: order.id
                 };
-            }catch{
+            }catch(e){
+                console.log(e);
                 return{
                     ok:false,
                     error: 'Could not create order'
@@ -169,20 +171,31 @@ export class OrderService{
         user: User, 
         { id: orderId }: GetOrderInput
         ): Promise<GetOrderOutput>{
-          const order = await this.orders.findOne(orderId, {
-              relations: ['restaurant']
-          });
-        if(!order){
-              return{
-                  ok: false,
-                  error: 'Order not found'
-            };
-        }
-        if(!this.canSeeOrder(user, order)){
+        try{
+            const order = await this.orders.findOne(orderId, {
+                relations: ['restaurant']
+            });
+            if(!order){
+                  return{
+                      ok: false,
+                      error: 'Order not found'
+                };
+            }
+            if(!this.canSeeOrder(user, order)){
+                return {
+                    ok: false,
+                    error: "You can't see that"
+                };
+            }
+            return {
+                ok: true,
+                order
+            }
+        }catch {
             return {
                 ok: false,
-                error: "You can't see that"
-            };
+                error: 'Could not load order'
+            }
         }
     }
     async editOrder(
