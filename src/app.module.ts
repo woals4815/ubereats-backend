@@ -46,6 +46,7 @@ import { UploadsModule } from './uploads/uploads.module';
       })
     }),
     GraphQLModule.forRoot({
+      playground: true,
       installSubscriptionHandlers: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({req, connection}) => {
